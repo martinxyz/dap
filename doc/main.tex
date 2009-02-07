@@ -1,0 +1,155 @@
+\title{Desktop Awareness Project}
+\author{
+        Martin Renold \\
+        Personal Research
+        }
+\date{\today}
+
+% Title reasoning...
+%Desktop Awareness Project (DAP)                      
+%- who is aware? the users about the desktop? nope... 
+%User Awareness Project (UAP)                         
+%                                                     
+%Desktop Sensor System (DSS) 
+%Desktop Sensing System
+
+\documentclass[]{article}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+These days Desktop environments are mostly thought of as a container
+where the user can run independent applications. No program cares what
+other applications are running, what dialog the user currently
+interacts, whether the user is anywhere near the keyboard at all, and
+whether the sound has been muted.
+
+The goal of this project is to constantly watch what the user is doing
+with the desktop, and expose that information to application
+developers. During the project, some sample applications should be
+developed, eg. giving the user a statistic about what program is being
+interacted with how long.
+
+\section{Data Sources}
+
+The idea is to just throw as many different data sources as possible
+at the central algorithm, and let it figure out whether they are
+useful and how they are correlated. It is more important to have some
+data from every source than to have it all processed properly.
+
+\subsection{Keyboard and Mouse}
+
+Keyboard statistics, maybe even some common keyboard shortcuts or
+commands (careful about sensitive data...). Mouse motion in pixels
+during the last 5 minutes, number of keys pressed during the lats
+10seconds, minimum/maximum pause between keys/mouse.
+
+\subsection{Microphone}
+When available, the microphone will record many potentially useful
+events. It can hear the user approaching and detect whether there is
+anybody out there at all. It might even be able to distinguish the
+sound of different doors and windows being opened or closed, and it
+will most certainly also hear typing and clicking. It will also detect
+chairs moving, vacuum cleaner, toilet flushing, cooking activity,
+light switches being pressed, electrical disturbances, power supply
+noise, music (possibly produced by the host PC), and many things you
+would never have thought of.
+
+Some signal processing is required to detect such events. As a first
+approach, just calculate the average amplitude over some time, and its
+derivative. Later, cepstral coefficients migth come handy.
+
+\subsection{Video}
+Video input, if available, produces a huge amount of data to process,
+and a lot of literature to read about processing algorithms.  I
+suggest to just average the brightness over four screen regions and
+record their absolute and relative value and its derivative. This
+should at least allow to detect when someone is passing by or moving.
+
+There are tons of other features that could be added later, eg. the
+noise level, color, sharpness, etc. and even the output of complete
+object recognition algorithms (eg. viola jones face detection).
+
+\subsection{System Statistics}
+CPU load, harddisk activity, maybe CPU and Harddisk temperature.  New
+processes created, process CPU and memory usage. System uptime, last
+reboot, uptime last week, network connectivity, usual poweroff times,
+etc.
+
+\subsection{Window Manager}
+Ask the Window manager about visible window, window with input focus,
+when a window is created, etc.
+
+\subsection{USB Bus}
+Plugging of hardware devices. (eg. camera, usb sticks, etc)
+
+\subsection{Audio Output}
+Sounds being played by the PC. Beeps and music.
+
+\subsection{Filenames}
+A bit trickier: record whenever a file is saved. (To allow the user)
+
+
+\subsection{Specific Application Events}
+Receiving a new email, sending one. URL/Title of the webpage being
+surfed to. Person/Channel being chated with/in.
+
+\section{Possible Applications}
+
+\subsection{Application Usage Statistics}
+Programs for that already exist on Windows. Display how many hours
+each application was used. Can be useful eg. to monitor game
+addiction.
+
+Additionally, show an uptime graph with 24 hours on the x-axis and
+number of days that the computer was up on the y-axis. Can do same
+thing for individual applications.
+
+\subsection{Chat Programs}
+For chat programs, usually something like ``mark me idle after 5
+minutes of inactivity'' is used. This could be improved by adding an
+estimate about the return time, or eg. immediatly marking the user as
+unavailable when the door to the room is closed, and mark the user as
+available again when he enters the room (even without touching mouse
+or keyboard). Privacy is a concern here, of course; just make sure the
+user can choose exactly how much information he is giving away.
+
+Also, chat programs often need to draw attention when a new message
+comes in, eg. by playing a sound or focusing the window. The acitivity
+monitor could be used to delay such things until the next natural
+microbreak that the user takes, or the notification delayed until the
+user is back.
+
+\subsection{User defined application starters}
+If the recognized events can somehow be visualized to the user, the
+use can be allowed to attach something to those events, eg. lock the
+screen whenever the user stands up, or print a notification if there
+was no vacum cleaner sound for more than two weeks, or shut down the
+PC when the user left the building.
+
+Extending the concept, the system might even detect repeated sequences
+of actions and offer to automate the task. For example when the user
+always opens the image in GIMP after taking a screenshot, the system
+could ask whether it should do so automatically every time. Or focus
+the email window whenever the user comes back.
+
+\subsection{Background Tasks}
+An API could be offered that finds out suitable start times for
+starting background task like backups or indexing.
+
+\subsection{Memory Refreshers}
+
+[This might not belong into this project.]
+
+Get memory refreshers about specific stuff, eg. if you view an email
+of a person that you rarely read emails from, offer to view the
+webpage where you last read about that same person. Same thing with
+rare topics...
+
+\section{Architecture}
+hm...
+
+\end{document}
+
