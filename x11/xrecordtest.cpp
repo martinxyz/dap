@@ -3,12 +3,42 @@
 #include <string.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/record.h>
+#include <X11/Xproto.h>
 
 static void
 callback(XPointer trash, XRecordInterceptData* data)
 {
-  printf("x\n");
+  printf("%d ", data->category);
+
+      /*
+  switch (data->category)
+    {
+    case XRecordStartOfData:
+    case XRecordFromClient:
+    case XRecordClientStarted:
+    case XRecordClientDied:
+    case XRecordEndOfData:
+      break;
+      */
+
+  if (data->category == XRecordFromServer) {
+    xEvent * event = (xEvent *)data->data;
+    if (event->u.u.type == KeyPress) {
+      printf("KeyPress");
+    } else if (event->u.u.type == KeyRelease) {
+      printf("KeyRelease");
+    } else if (event->u.u.type == ButtonPress || event->u.u.type == ButtonRelease) {
+      printf("ButtonPress/Release");
+    } else if (event->u.u.type == MotionNotify) {
+      printf("Motion");
+    }
+  } else if (data->category == XRecordStartOfData) {
+    printf("Start of Data");
+  }
+
+  printf("\n");
   fflush(stdout);
+
   XRecordFreeData(data);
 }
 
@@ -62,18 +92,9 @@ main()
     exit(-1);
   }
 
-  // Call above seens to block forever.
-
+  // Call above seems to block forever.
   fprintf(stderr, "Terminating. (huh?)\n");
 
-  /*
-    XFree(range);
-
-
-    // might be nonsense:
-    XRecordDisableContext(display, context);
-    XRecordFreeContext(display, context);
-    XCloseDisplay(display);
-  */
+  // Who cares about cleanup, linux and xorg sure will do this for us.
   return 0;
 }
