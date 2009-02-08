@@ -42,7 +42,7 @@ main()
 
    Window focus_window = 0;
    while (1) {
-     usleep(100);
+     usleep(50000);
 
      Window win;
      int trash;
