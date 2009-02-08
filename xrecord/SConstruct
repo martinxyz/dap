@@ -1,8 +1,0 @@
-env = Environment()
-#env.Append(CXXFLAGS=' -Wall -Wno-sign-compare -Wno-write-strings')
-env.Append(LIBS=['X11', 'Xtst'])
-
-#	gcc -fPIC -shared -lX11 -lXtst pyrecord.o -o pyrecord.so
-#env.ParseConfig('python-config --cflags --ldflags')
-
-env.Program('xrecordtest.cpp')

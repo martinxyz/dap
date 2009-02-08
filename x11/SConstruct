@@ -1,0 +1,5 @@
+env = Environment()
+env.Append(CXXFLAGS=' -Werror')
+env.Append(LIBS=['X11', 'Xtst'])
+env.Program('xrecordtest.cpp')
+env.Program('getfocuswindow.cpp')
