@@ -28,6 +28,7 @@ Display_Window_Id(Window window)
 	    printf(" (has no name)");
     }
     printf("\n");
+    fflush(stdout);
 
     return;
 }
