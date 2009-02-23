@@ -2,59 +2,86 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 Display* dpy;
 
 static void
 Display_Window_Id(Window window)
 {
-    char *win_name;
     
-    printf("0x%lx", window);         /* print id # in hex/dec */
+  printf("0x%lx", window);         /* print id # in hex/dec */
 
-    if (!window) {
+  if (!window) {
 	printf(" (none)");
-    } else {
+  } else {
 	if (window == DefaultRootWindow(dpy)) {
-	    printf(" (the root window)");
+      printf(" (the root window)");
 	}
-	if (!XFetchName(dpy, window, &win_name)) { /* Get window name if any */
-	    printf(" (has no name)");
-	} else if (win_name) {
-	    printf(" \"%s\"", win_name);
-	    XFree(win_name);
-	}
-	else
-	    printf(" (has no name)");
+    char *name;
+	if (!XFetchName(dpy, window, &name)) { /* Get window name if any */
+      printf(" (has no name)");
+	} else if (name) {
+      printf(" \"%s\"", name);
+      XFree(name);
+	} else {
+      printf(" (has no name)");
     }
-    printf("\n");
-    fflush(stdout);
 
-    return;
+    XClassHint class_hint;
+	if (!XGetClassHint(dpy, window, &class_hint)) { /* Get window name if any */
+      printf(" (no class hint)");
+	} else {
+      if (class_hint.res_name) {
+        printf(" | \"%s\"", class_hint.res_name);
+        XFree(class_hint.res_name);
+      }
+      if (class_hint.res_class) {
+        printf(" | \"%s\"", class_hint.res_class);
+        XFree(class_hint.res_class);
+      }
+	}
+  }
+  printf("\n");
+  fflush(stdout);
+
+  return;
 }
+
 int
 main()
 {
-   dpy = XOpenDisplay(0);
-   if (dpy == 0) {
-     fprintf(stderr, "unable to open display\n");
-     exit(-1);
-   }
+  _Xdebug = 1;
+  dpy = XOpenDisplay(0);
+  if (!dpy) {
+    fprintf(stderr, "unable to open display\n");
+    exit(-1);
+  }
 
-   Window focus_window = 0;
-   while (1) {
-     usleep(50000);
-
-     Window win;
-     int trash;
-     XGetInputFocus(dpy, &win, &trash);
-     if (win != focus_window) {
-       focus_window = win;
-       Display_Window_Id(focus_window);
-     }
-   }
+/*
+  int (*XSetErrorHandler(handler))()
+    int (*handler)(Display *, XErrorEvent *)
+*/
 
 
-   XCloseDisplay(dpy);
-   return 0;
+  Window focus_window = 0;
+  while (1) {
+    usleep(50000);
+
+    Window win;
+    int trash;
+    int result = XGetInputFocus(dpy, &win, &trash);
+    if (!result) {
+      printf("Error returned!\n");
+    } else {
+      if (win != focus_window) {
+        focus_window = win;
+        Display_Window_Id(focus_window);
+      }
+    }
+  }
+
+
+  XCloseDisplay(dpy);
+  return 0;
 }
