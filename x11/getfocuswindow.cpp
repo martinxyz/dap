@@ -9,38 +9,36 @@ Display* dpy;
 static void
 Display_Window_Id(Window window)
 {
-    
-  printf("0x%lx", window);         /* print id # in hex/dec */
-
   if (!window) {
-	printf(" (none)");
+	printf("(none)");
   } else {
 	if (window == DefaultRootWindow(dpy)) {
-      printf(" (the root window)");
-	}
-    char *name;
-	if (!XFetchName(dpy, window, &name)) { /* Get window name if any */
-      printf(" (has no name)");
-	} else if (name) {
-      printf(" \"%s\"", name);
-      XFree(name);
+      printf("(the root window)");
 	} else {
-      printf(" (has no name)");
+      /*
+        char *name;
+        if (!XFetchName(dpy, window, &name)) {
+        printf(" (has no name)");
+        } else if (name) {
+        printf(" \"%s\"", name);
+        XFree(name);
+        } else {
+        printf(" (has no name)");
+        }
+      */
+      XClassHint class_hint;
+      if (!XGetClassHint(dpy, window, &class_hint)) { /* Get window name if any */
+        printf(" (window class hint missing)");
+      } else {
+        if (class_hint.res_name) {
+          XFree(class_hint.res_name);
+        }
+        if (class_hint.res_class) {
+          printf("%s", class_hint.res_class);
+          XFree(class_hint.res_class);
+        }
+      }
     }
-
-    XClassHint class_hint;
-	if (!XGetClassHint(dpy, window, &class_hint)) { /* Get window name if any */
-      printf(" (no class hint)");
-	} else {
-      if (class_hint.res_name) {
-        printf(" | \"%s\"", class_hint.res_name);
-        XFree(class_hint.res_name);
-      }
-      if (class_hint.res_class) {
-        printf(" | \"%s\"", class_hint.res_class);
-        XFree(class_hint.res_class);
-      }
-	}
   }
   printf("\n");
   fflush(stdout);
@@ -62,7 +60,6 @@ main()
   int (*XSetErrorHandler(handler))()
     int (*handler)(Display *, XErrorEvent *)
 */
-
 
   Window focus_window = 0;
   while (1) {
