@@ -9,13 +9,15 @@ focus_child = subprocess.Popen('x11/getfocuswindow', stdout=subprocess.PIPE)
 
 slotduration = 5*60.0 # seconds
 #slotduration = 3
-lastslot = time.time() - slotduration
+lastslot = time.time()
 
-slot_applications = [None]
+slot_applications = []
 slot_activity = False
 
 children_stdouts = [xrecord_child.stdout, focus_child.stdout]
 
+print '# new log starts, slot duration is', slotduration, 'seconds'
+print '#', 'seconds', 'keyboard/mouse activity', 'applications with keyboard focus'
 while True:
     assert xrecord_child.poll() is None, 'xrecord child dead' 
     assert focus_child.poll() is None, 'focus child dead' 
@@ -23,9 +25,10 @@ while True:
     t = time.time()
     while t > lastslot + slotduration:
         # finish the last slot first
-        print slot_activity, slot_applications
+        print int(time.time()), int(slot_activity), slot_applications
         sys.stdout.flush()
-        slot_applications = [slot_applications[-1]]
+        if slot_applications:
+            slot_applications = [slot_applications[-1]]
         slot_activity = False
         lastslot += slotduration
     for f in ready:
