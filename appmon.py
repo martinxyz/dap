@@ -16,8 +16,10 @@ slot_activity = False
 
 children_stdouts = [xrecord_child.stdout, focus_child.stdout]
 
+print >>sys.stderr, 'start at', int(time.time())
 print '# new log starts, slot duration is', slotduration, 'seconds'
 print '#', 'seconds', 'keyboard/mouse activity', 'applications with keyboard focus'
+sys.stdout.flush()
 while True:
     assert xrecord_child.poll() is None, 'xrecord child dead' 
     assert focus_child.poll() is None, 'focus child dead' 
