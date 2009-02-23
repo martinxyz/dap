@@ -9,6 +9,7 @@ Display* dpy;
 static void
 Display_Window_Id(Window window)
 {
+  //printf("0x%lx ", window);
   if (!window) {
 	printf("(none)");
   } else {
@@ -28,7 +29,17 @@ Display_Window_Id(Window window)
       */
       XClassHint class_hint;
       if (!XGetClassHint(dpy, window, &class_hint)) { /* Get window name if any */
-        printf(" (window class hint missing)");
+        Window parent_window;
+        Window root_window;
+        Window *children;
+        unsigned int nchildren;
+        XQueryTree(dpy, window, &root_window, &parent_window, &children, &nchildren);
+        if (parent_window == root_window) {
+          printf("(window without class hint)");
+        } else {
+          Display_Window_Id(parent_window);
+          return;
+        }
       } else {
         if (class_hint.res_name) {
           XFree(class_hint.res_name);
