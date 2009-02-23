@@ -11,42 +11,35 @@ Display_Window_Id(Window window)
 {
   //printf("0x%lx ", window);
   if (!window) {
-	printf("(none)");
+	printf("(null)");
   } else {
 	if (window == DefaultRootWindow(dpy)) {
       printf("(the root window)");
 	} else {
-      /*
-        char *name;
-        if (!XFetchName(dpy, window, &name)) {
-        printf(" (has no name)");
-        } else if (name) {
-        printf(" \"%s\"", name);
-        XFree(name);
-        } else {
-        printf(" (has no name)");
-        }
-      */
       XClassHint class_hint;
-      if (!XGetClassHint(dpy, window, &class_hint)) { /* Get window name if any */
-        Window parent_window;
-        Window root_window;
-        Window *children;
-        unsigned int nchildren;
-        XQueryTree(dpy, window, &root_window, &parent_window, &children, &nchildren);
-        if (parent_window == root_window) {
-          printf("(window without class hint)");
-        } else {
-          Display_Window_Id(parent_window);
-          return;
-        }
-      } else {
+      if (XGetClassHint(dpy, window, &class_hint)) {
         if (class_hint.res_name) {
           XFree(class_hint.res_name);
         }
         if (class_hint.res_class) {
           printf("%s", class_hint.res_class);
           XFree(class_hint.res_class);
+        }
+      } else {
+        Window parent_window, root_window;
+        Window *children;
+        unsigned int nchildren;
+        if (XQueryTree(dpy, window, &root_window, &parent_window, &children, &nchildren)) {
+          if (children) XFree(children);
+          if (parent_window == root_window) {
+            printf("(window without class hint)");
+          } else {
+            Display_Window_Id(parent_window);
+            return;
+          }
+        } else {
+          // most likely a BadWindow error
+          printf("(x11 error)");
         }
       }
     }
@@ -57,39 +50,45 @@ Display_Window_Id(Window window)
   return;
 }
 
+int handler(Display * error_display, XErrorEvent * error_event)
+{
+  if (error_event->error_code == BadWindow) {
+    // safe to ignore, seemt to happen eg. during window manager replacement
+    fprintf(stderr, "Ignoring BadWindow error.\n");
+  } else {
+    char buf[256];
+    XGetErrorText(error_display, error_event->error_code, buf, 250);
+    fprintf(stderr, "X11 Error: %s\n", buf);
+    exit(1);
+  }
+  return 0;
+}
+
 int
 main()
 {
-  _Xdebug = 1;
   dpy = XOpenDisplay(0);
   if (!dpy) {
-    fprintf(stderr, "unable to open display\n");
+    fprintf(stderr, "unable to open x11 display\n");
     exit(-1);
   }
 
-/*
-  int (*XSetErrorHandler(handler))()
-    int (*handler)(Display *, XErrorEvent *)
-*/
+  XSetErrorHandler(handler);
 
   Window focus_window = 0;
   while (1) {
     usleep(50000);
-
     Window win;
     int trash;
-    int result = XGetInputFocus(dpy, &win, &trash);
-    if (!result) {
-      printf("Error returned!\n");
-    } else {
+    if (XGetInputFocus(dpy, &win, &trash)) {
       if (win != focus_window) {
         focus_window = win;
         Display_Window_Id(focus_window);
       }
+    } else {
+      printf("(XGetInputFocus error)\n");
     }
   }
-
-
   XCloseDisplay(dpy);
   return 0;
 }
