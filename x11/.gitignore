@@ -1,5 +1,5 @@
 *.o
 .sconsign.dblite
-xrecordtest
+activity_monitor
 getfocuswindow
 
