@@ -7,8 +7,8 @@ import select
 xrecord_child = subprocess.Popen('x11/activity_monitor', stdout=subprocess.PIPE)
 focus_child = subprocess.Popen('x11/getfocuswindow', stdout=subprocess.PIPE)
 
-#slotduration = 5*60.0 # seconds
-slotduration = 3
+slotduration = 5*60.0 # seconds
+#slotduration = 3
 lastslot = time.time()
 
 slot_applications = []
