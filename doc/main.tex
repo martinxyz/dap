@@ -13,7 +13,7 @@
 %Desktop Sensor System (DSS) 
 %Desktop Sensing System
 %
-% Alibi.
+% Alibi. - cool, but not googleable, and might be missinterpreted
 
 \documentclass[]{article}
 
@@ -22,22 +22,45 @@
 
 \section{Introduction}
 
-These days Desktop environments are mostly thought of as a container
-where the user can run independent applications. No program cares what
-other applications are running, what dialog the user currently
-interacts, whether the user is anywhere near the keyboard at all, and
-whether the sound has been muted.
+These days Desktop environments are mostly thought of as a dead
+container for independent applications. Recent activity and the daily
+workflow is knowlege reserved to humans. This project aims to monitor
+the activity of the user. The data is made accessible to developers in
+raw form or preprocessed for specific needs.
 
-The goal of this project is to constantly watch what the user is doing
-with the desktop, and expose that information to application
-developers. During the project, some sample applications should be
-developed, eg. giving the user a statistic about what program is being
-interacted with how long.
+Examples are keyboard and mouse events, the name of the focused
+application, recently started processes, or the amplitude recorded by
+a microphone.
+
+\subsection{Applications}
+During the project, some sample applications are developed that use
+this data. Here are some ideas:
+\begin{itemize}
+\item
+Display lots of statistics, eg. the daily/weekly time spent using each
+application, which applications are used together, the hourly uptime
+statistic for the average day, etc.
+\item
+Provide information about user proximity for chat applications. Some
+chat programs already have such functionality, but they will probably
+not include microphone readings. It might even be possible to estimate
+return times based on daily statistics in some cases. Address privacy
+concerns.
+\item
+Allow the user to trigger commands on certain events, eg. when
+entering/leaving an application. For example you could run scripts to
+change the keyboard layout or mouse sensitivity for certain
+programs only.
+\item
+Some email/chat/update programs provide baloon notifications. Hold
+them back while the user is not present, and possibly wait until the
+user stops typing before showing them.
+\end{itemize}
 
 \section{Data Sources}
 
 The idea is to just throw as many different data sources as possible
-at the central algorithm, and let it figure out whether they are
+at some central algorithm, and let it figure out whether they are
 useful and how they are correlated. It is more important to have some
 data from every source than to have it all processed properly.
 
@@ -93,10 +116,13 @@ Sounds being played by the PC. Beeps and music.
 \subsection{Filenames}
 A bit trickier: record whenever a file is saved. (To allow the user)
 
+\subsection{Clipboard}
+Copy/Paste of small text pieces.
 
-\subsection{Specific Application Events}
+\subsection{Application Specific Events}
 Receiving a new email, sending one. URL/Title of the webpage being
-surfed to. Person/Channel being chated with/in.
+surfed to. Person/Channel being chated with/in. A generic interface
+could be provided where those applications can report such activity.
 
 \section{Possible Applications}
 
@@ -117,12 +143,6 @@ unavailable when the door to the room is closed, and mark the user as
 available again when he enters the room (even without touching mouse
 or keyboard). Privacy is a concern here, of course; just make sure the
 user can choose exactly how much information he is giving away.
-
-Also, chat programs often need to draw attention when a new message
-comes in, eg. by playing a sound or focusing the window. The acitivity
-monitor could be used to delay such things until the next natural
-microbreak that the user takes, or the notification delayed until the
-user is back.
 
 \subsection{User defined application starters}
 If the recognized events can somehow be visualized to the user, the
