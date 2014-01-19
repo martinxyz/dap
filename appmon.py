@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import subprocess
 import os, sys
 import time
@@ -16,9 +16,9 @@ slot_activity = False
 
 children_stdouts = [xrecord_child.stdout, focus_child.stdout]
 
-print >>sys.stderr, 'start at', int(time.time())
-print '# new log starts, slot duration is', slotduration, 'seconds'
-print '#', 'seconds', 'keyboard/mouse activity', 'applications with keyboard focus'
+print('start at', int(time.time()))
+print('# new log starts, slot duration is', slotduration, 'seconds')
+print('#', 'seconds', 'keyboard/mouse activity', 'applications with keyboard focus')
 sys.stdout.flush()
 while True:
     assert xrecord_child.poll() is None, 'xrecord child dead' 
@@ -27,7 +27,7 @@ while True:
     t = time.time()
     while t > lastslot + slotduration:
         # finish the last slot first
-        print int(time.time()), int(slot_activity), list(set(slot_applications))
+        print(int(time.time()), int(slot_activity), list(set(slot_applications)))
         sys.stdout.flush()
         if slot_applications:
             slot_applications = [slot_applications[-1]]

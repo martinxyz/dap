@@ -13,10 +13,11 @@ t_start = None
 appcount = {}
 appcorr = {}
 
-ignore_before_t = time.time() - 8*HOUR
-ignore_before_t = 0
+ignore_before_t = time.time() - 30*24*HOUR
+#ignore_before_t = 0
 
 logfile = os.path.join(os.getenv('HOME', '.'), '.dap/appmon.log')
+print 'logfile', logfile
 for line in open(logfile):
     if line.startswith('#'):
         continue
@@ -54,13 +55,13 @@ print 'average uptime %.1f hours per day, of which %.1f hours have activity' % (
 apps = appcount.items()
 apps.sort(key=lambda(x): x[1])
 print 'If application use overlaps within 5mins, activity is counted for both:'
-for name, count in apps[-10:]:
+for name, count in apps[-14:]:
     print '% 5.1f hours: %s' % (count*TICK/HOUR, name)
 
 
 corr = appcorr.items()
 corr.sort(key=lambda(x): x[1])
 print 'Most frequent co-appearance:'
-for (name1, name2), count in corr[-10:]:
+for (name1, name2), count in corr[-14:]:
     print '% 5.1f hours: %s and %s' % (count*TICK/HOUR, name1, name2)
     
