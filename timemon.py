@@ -60,12 +60,15 @@ while True:
             if slot_activity and browser_focus:
                 if warntime == 0:
                     #warntime = 26.25
-                    warntime = 5*60
+                    #warntime = 5*60
+                    #warntime = 14*60
+                    warntime = 26*60
                 if webtime > warntime:
+                    #subprocess.call(['notify-send', '-u', 'critical', 'passing', time2str(warntime)])
                     subprocess.call(['notify-send', 'passing', time2str(warntime)])
-                    subprocess.call(['notify-send', 'passing', time2str(warntime)])
-                    subprocess.call(['notify-send', 'passing', time2str(warntime)])
-                    warntime *= 3
+                    #subprocess.call(['notify-send', '-u', 'critical', 'passing', time2str(warntime)])
+                    #subprocess.call(['notify-send', '-u', 'critical', 'passing', time2str(warntime)])
+                    warntime *= 2.5
         print('state', state, 'webtime', webtime, 'fac', fac)
 
         # finish the last slot first
